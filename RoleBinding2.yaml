@@ -1,0 +1,16 @@
+# This RoleBinding allows user dave to read secrets only in development namespace.
+# Here "secret-read" is a ClusterRole. To use this binding first apply clusterrole1.yaml
+#
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: read-secrets
+  namespace: development
+subjects:
+- kind: User
+  name: dave
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: secret-read
+  apiGroup: rbac.authorization.k8s.io

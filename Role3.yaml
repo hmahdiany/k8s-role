@@ -1,0 +1,17 @@
+# This role only allows to read and update configmap named "my-configmap".
+#
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: default
+  name: configmap-updater
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  resourceNames:
+  - my-configmap
+  verbs:
+  - get
+  - update
