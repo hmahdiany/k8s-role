@@ -1,0 +1,17 @@
+1. edit kubeadm-init.yaml and add new names
+2. move /etc/kubernetes/pki/apiserver.crt and apiserver.key to another place
+3. execute this command: kubeadm init phase certs apiserver --config kubeadm-init.yaml
+4. docker kill apiserver
+4.1. copy new certs to other master nodes
+4.2. docker kill apiserver on other master nodes
+5. edit /etc/kubernetes/kubelet.conf and add new server address
+6. edit file ~/.kube/config and add new server address
+7. kubectl -n kube-system edit cm kube-proxy
+8. docker kill kube-proxy
+9. edit kubelet.conf on workers
+10. docker kill kube-proxy on workers
+11. kubectl -n kube-system get configmap kubeadm-config -o jsonpath='{.data.ClusterConfiguration}' > kubeadm.yaml
+12. kubeadm init phase upload-config kubeadm --config  kubeadm.yaml
+13. kubectl -n kube-system edit cm kubeadm-config
+14. kubectl -n kube-public edit cm cluster-info
+15. openssl x509 -in /etc/kubernetes/pki/apiserver.crt -text
