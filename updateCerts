@@ -5,6 +5,7 @@
 4.1. copy new certs to other master nodes
 4.2. docker kill apiserver on other master nodes
 5. edit /etc/kubernetes/kubelet.conf and add new server address
+5.1. systemctl restart kubelet
 6. edit file ~/.kube/config and add new server address
 7. kubectl -n kube-system edit cm kube-proxy
 8. docker kill kube-proxy
