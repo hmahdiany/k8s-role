@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nobino
+  namespace: default
+spec:
+  rules:
+  - host: preproduct.nobino.ir
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: tv-front-svc 
+            port:
+              number: 80
+  - host: preproduct-back.nobino.ir
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: tv-back-svc 
+            port:
+              number: 8081 

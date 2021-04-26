@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: cadvisor
+  namespace: cadvisor
+spec:
+  rules:
+  - host: cadvisor.art.net
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: cadvisor-svc 
+            port:
+              number: 80

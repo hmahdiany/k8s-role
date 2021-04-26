@@ -1,0 +1,54 @@
+apiVersion: kubeadm.k8s.io/v1beta2
+kind: ClusterConfiguration
+kubernetesVersion: 1.20.2
+dns:
+  type: CoreDNS
+etcd:
+  local:
+    serverCertSANs:
+    - 192.168.115.35
+    - kuber-master-n1
+    - 192.168.115.36
+    - kuber-master-n2
+    - 192.168.115.37
+    - kuber-master-n3
+    peerCertSANs:
+    - 192.168.115.35
+    - kuber-master-n1
+    - 192.168.115.36
+    - kuber-master-n2
+    - 192.168.115.37
+    - kuber-master-n3
+
+networking:
+  # This CIDR is a Calico default. Substitute or remove for your CNI provider.
+  serviceSubnet: "10.96.0.0/12"
+  podSubnet: "172.16.32.0/19"
+  dnsDomain: "cluster.local"
+apiServer:
+  certSANs:
+  - 192.168.115.40
+  - 192.168.115.35
+  - 192.168.115.36
+  - 192.168.115.37
+  - cluster.local
+controlPlaneEndpoint: "kuber-haproxy-n1:6443"
+certificatesDir: "/etc/kubernetes/pki"
+imageRepository: "k8s.gcr.io"
+useHyperKubeImage: false
+clusterName: "cluster.local"
+---
+apiVersion: kubeadm.k8s.io/v1beta2
+kind: InitConfiguration
+localAPIEndpoint:
+  advertiseAddress: 192.168.115.35
+  bindPort: 6443
+nodeRegistration:
+  kubeletExtraArgs:
+    node-ip: 192.168.115.35
+---
+apiVersion: kubeproxy.config.k8s.io/v1alpha1
+kind: KubeProxyConfiguration
+# This CIDR is a Calico default. Substitute or remove for your CNI provider.
+clusterCIDR: "172.16.32.0/19"
+mode: "ipvs"

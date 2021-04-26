@@ -1,0 +1,56 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: tv-mysql-svc
+spec:
+  selector:
+    app: tv-mysql
+  ports:
+    - port: 3306
+      targetPort: 3306
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tv-mysql
+  labels:
+    app: mysql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tv-mysql
+  template:
+    metadata:
+      labels:
+        app: tv-mysql
+    spec:
+      containers:
+        - name: mysql
+          image: mysql:5.7
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3306
+          volumeMounts:
+            - name: mysql-data
+              mountPath: "/var/lib/mysql"
+              subPath: "mysql"
+            - name: mysql-config
+              mountPath: /etc/mysql/conf.d
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secrets
+                  key: ROOT_PASSWORD
+      volumes:
+        - name: mysql-data
+          nfs:
+            server: 192.168.115.40
+            path: /opt/nobino/db
+        - name: mysql-config
+          configMap:
+            name: tv-mysql-configmap
+            items:
+            - key: docker.cnf
+              path: docker.cnf

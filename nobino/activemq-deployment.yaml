@@ -1,0 +1,61 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: tv-activemq-svc
+spec:
+  selector:
+    app: activemq
+  ports:
+    - name: http
+      port: 8161
+      targetPort: 8161
+    - name: tcp
+      port: 61617
+      targetPort: 61617
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    labels:
+        app: activemq
+    name: activemq
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: activemq
+    template:
+        metadata:
+            labels:
+                app: activemq
+        spec:
+            containers:
+            - image: vromero/activemq-artemis:2.11.0-alpine
+              imagePullPolicy: IfNotPresent
+              resources:
+                requests:
+                  memory: "512Mi"
+                  cpu: "250m"
+                limits:
+                  memory: "1024Mi"
+                  cpu: "500m"
+              name: activemq
+              ports:
+              - containerPort: 8161
+                name: http
+              - containerPort: 61617
+                name: tcp
+              volumeMounts:
+              - name: nfs-node1 
+                mountPath: /opt/apache-artemis-2.11.0/node1
+              - name: nfs-etc
+                mountPath: /var/lib/artemis/etc
+            volumes:
+              - name: nfs-node1
+                nfs:
+                  server: 192.168.115.40
+                  path: /opt/nobino/activemq/apache-artemis-2.11.0/node1
+              - name: nfs-etc
+                nfs:
+                  server: 192.168.115.40
+                  path: /opt/nobino/activemq/apache-artemis-2.11.0/node1/etc
